@@ -11,9 +11,11 @@
 <modal name="hello-world">
   hello, world!
 
-  <button>Cerrar</button>
+<div class="footer">
+<br />
+  <button style="margin-left: 470px;" class="btn btn-primary">Cerrar</button>
+</div>
 </modal>
-
 </div>
 </template>
 
@@ -52,5 +54,10 @@ export default {
 .conteiner{
     margin-left: 100px;
     margin-top: 50px;
+}
+
+.footer{
+    background-color: black;
+    padding: 5px;
 }
 </style>
