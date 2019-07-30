@@ -1,11 +1,6 @@
 export const state = () => (
     {
-        notas: [{
-            encabezado: '',
-            cuerpo: '',
-            pieDePagina: '',
-            fecha: ''
-        }]
+        notas: []
     })
 
 
