@@ -8,12 +8,13 @@
  <div  class="card" style="width: 18rem;">
  <img class="card-img-top" src="https://www.conservatoriogijon.com/wp-content/uploads/2018/10/carta.png" alt="Card image cap">
   <div class="card-body">
+  {{nota.id}}
     <h5 class="card-title">{{nota.encabezado}}</h5>
     <hr>
     <p class="card-text">{{nota.cuerpo}}</p>
     <p>{{nota.pieDePagina}}</p>
-    <button style="margin-left: 150px"  @click="Crear" class="btn btn-info">U</button>
-<button  @click="Cerrar" class="btn btn-danger">D</button>
+    <button style="margin-left: 150px"  @click="tomar(nota.id)" class="btn btn-info">U</button>
+<button  @click="Eliminar(nota)" class="btn btn-danger">D</button>
   </div>
 </div>
 </div>
@@ -57,7 +58,8 @@ export default {
       cuerpo: '',
       pieDePagina: '',
       fecha: '29/7/2019'
-      }
+      },
+      datos: []
      };
  },
  methods: {
@@ -71,6 +73,16 @@ export default {
          this.$store.commit('notas/add', this.form)
          console.log(this.form);
          this.$modal.hide('hello-world');
+     },Eliminar(nota){
+      this.$store.commit('notas/delete', nota)
+     },
+     tomar(id){
+         console.log(id);
+      this.datos =  this.$store.state.notas.notas.find(u => u.id == id);
+      this.$modal.show('hello-world');
+      this.form.encabezado = this.datos.encabezado;
+      this.form.cuerpo = this.datos.cuerpo;
+      this.form.pieDePagina = this.datos.pieDePagina;
      }
  },
  computed: {
