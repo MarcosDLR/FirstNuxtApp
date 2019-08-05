@@ -1,20 +1,24 @@
 <template>
 <div class="conteiner">
 <h2>Notas</h2>
+
 <button @click="abrir" class="btn btn-primary">Crear</button>
-<div class="mostrarnotas">
+<br /><br />
+<div class="mostrarnotas" style="float: left; margin-left: 30px;" v-for="notes in data" >
 <div class="row">
-<div   style="padding: 5px" v-for="nota in notas">
+<div   style="padding: 5px">
  <div  class="card" style="width: 18rem;">
  <img class="card-img-top" src="https://www.conservatoriogijon.com/wp-content/uploads/2018/10/carta.png" alt="Card image cap">
+ <div v-for="id in idnota">
+  {{id.id}}
+</div>
   <div class="card-body">
-  {{nota.id}}
-    <h5 class="card-title">{{nota.encabezado}}</h5>
+    <h5 class="card-title">{{notes.Titulo}}</h5>
     <hr>
-    <p class="card-text">{{nota.cuerpo}}</p>
-    <p>{{nota.pieDePagina}}</p>
-    <button style="margin-left: 150px"  @click="tomar(nota.id)" class="btn btn-info">U</button>
-<button  @click="Eliminar(nota)" class="btn btn-danger">D</button>
+    <p class="card-text">{{notes.Cuerpo}}</p>
+    <p>{{notes.PieDePagina}}</p>
+    <button  @click="Actulizar" class="btn btn-success">A</button>
+    <button  @click="Eliminar" class="btn btn-danger">E</button>
   </div>
 </div>
 </div>
@@ -26,11 +30,11 @@
 <hr>
 <div class="cont">
 <label>Titulo</label>
-<input type="text" v-model="form.encabezado" class="form-control" />
+<input type="text" v-model="form.Titulo" class="form-control" />
 <label>Cuerpo</label>
-<input type="textarea" v-model="form.cuerpo" class="form-control" />
+<input type="textarea" v-model="form.Cuerpo" class="form-control" />
 <label>Recordatorio</label>
-<input type="text" v-model="form.pieDePagina" class="form-control" />
+<input type="text" v-model="form.PieDePagina" class="form-control" />
 </div>
 
 <div class="footer">
@@ -40,55 +44,64 @@
 </div>
 </div>
 </modal>
+
 </div>
 </template>
 
 
 <script>
 import VModal from '~/plugins/modal'
-
+import database from '~/plugins/database'
 export default {
     name: 'Notas',
     title: 'Notas',
  data(){
      return {
       data: [],
+      idnota: [],
       form: {
-      encabezado: '',
-      cuerpo: '',
-      pieDePagina: '',
-      fecha: '29/7/2019'
+          Titulo: '',
+          Cuerpo: '',
+          PieDePagina: ''
       },
-      datos: []
      };
  },
+ created(){
+     this.tomarNotas();
+ },
  methods: {
-     abrir(){
+     tomarNotas(){
+            database.collection('Notas').get()
+   .then( querySnapshot => {
+       const notas = [];
+       const idnotas = [];
+       querySnapshot.forEach(nota => {
+           notas.push(nota.data());
+           idnotas.push(nota);
+           console.log(nota);
+       });
+       this.data = notas;
+       this.idnota = idnotas;
+   })
+   .catch( error => {
+       console.log(error);
+   })
+     },
+      abrir(){
        this.$modal.show('hello-world');
      },
      Cerrar(){
          this.$modal.hide('hello-world');
      },
      Crear(){
-         this.$store.commit('notas/add', this.form)
-         console.log(this.form);
-         this.$modal.hide('hello-world');
-     },Eliminar(nota){
-      this.$store.commit('notas/delete', nota)
+         database.collection('Notas').add(this.form).then(this.tomarNotas())
+         this.Cerrar()
      },
-     tomar(id){
-         console.log(id);
-      this.datos =  this.$store.state.notas.notas.find(u => u.id == id);
-      this.$modal.show('hello-world');
-      this.form.encabezado = this.datos.encabezado;
-      this.form.cuerpo = this.datos.cuerpo;
-      this.form.pieDePagina = this.datos.pieDePagina;
-     }
- },
- computed: {
-     notas() {
+     Actulizar(){
 
-         return this.$store.state.notas.notas
+     },
+     Eliminar(){
+
      }
  }
 }
