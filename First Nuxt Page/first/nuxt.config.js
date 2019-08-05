@@ -33,7 +33,8 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '@/plugins/modal'
+    '@/plugins/modal',
+    '@/plugins/firebase'
   ],
   /*
   ** Nuxt.js dev-modules
