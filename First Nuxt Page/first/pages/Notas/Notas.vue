@@ -1,14 +1,19 @@
 <template>
 <div class="conteiner">
-<h2>Notas</h2>
+    <center>
+<h1 style="color: white">Notas</h1>
+<hr />
+<button style="width: 400px" @click="abrir" class="btn btn-info">Crear nota</button>
 
-<button @click="abrir" class="btn btn-primary">Crear</button>
-<br /><br />
-<div class="mostrarnotas" style="float: left; margin-left: 30px;" v-for="notes in notaFinal" >
+</center>
+<br />
+<div class="contenedor">
+<div data-aos="flip-up" data-aos-duration="3000">
+<div class="mostrarnotas" style="float: left; margin-left: 30px;" v-for="(notes, index) in notaFinal" :key="index">
 <div class="row">
-<div   style="padding: 5px">
+<div   style="padding: 2px">
  <div  class="card" style="width: 18rem;">
- <img class="card-img-top" src="https://www.conservatoriogijon.com/wp-content/uploads/2018/10/carta.png" alt="Card image cap">
+ <img class="card-img-top" @click="select(notes)" :src="notes.imageUrl ? notes.imageUrl: 'https://www.conservatoriogijon.com/wp-content/uploads/2018/10/carta.png'" alt="Card image cap">
   <div class="card-body">
     <h5 class="card-title">{{notes.Titulo}}</h5>
     <hr>
@@ -21,11 +26,16 @@
 </div>
 </div>
 </div>
-
+</div>
+</div>
 <modal style="border-radius: 50px;" name="hello-world">
+    <center>
 <h3 style="padding: 20px">Crear nota</h3>
+    </center>
 <hr>
 <div class="cont">
+<input @change="takeImage" type="file"  />
+<br />
 <label>Titulo</label>
 <input type="text" v-model="form.Titulo" class="form-control" />
 <label>Cuerpo</label>
@@ -43,9 +53,13 @@
 </modal>
 
 <modal style="border-radius: 50px;" name="actualizar">
-<h3 style="padding: 20px">Crear nota</h3>
+    <center>
+<h3 style="padding: 20px">Actualizar nota</h3>
+    </center>
 <hr>
 <div class="cont">
+<input @change="takeImage" type="file"  />
+<br />
 <label>Titulo</label>
 <input type="text" v-model="form.Titulo" class="form-control" />
 <label>Cuerpo</label>
@@ -53,6 +67,7 @@
 <label>Recordatorio</label>
 <input type="text" v-model="form.PieDePagina" class="form-control" />
 </div>
+
 
 <div class="footer">
 <div class="row">
@@ -62,6 +77,9 @@
 </div>
 </modal>
 
+<modal style="border-radius: 50px;" name="image">
+<img :src="notaSelected.imageUrl" width="100%" height="100%">
+</modal>
 </div>
 </template>
 
@@ -70,26 +88,39 @@
 import VModal from '~/plugins/modal'
 import {db} from '~/plugins/firebase'
 import {storage} from '~/plugins/firebase'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 export default {
     name: 'Notas',
     title: 'Notas',
  data(){
      return {
       data: [],
+      notaSelected: {},
       idnota: [],
       notaFinal: [],
       NotaId: 0,
+      Image: '',
       form: {
           Titulo: '',
           Cuerpo: '',
-          PieDePagina: ''
+          PieDePagina: '',
+          imageUrl: ''
       },
      };
  },
  created(){
      this.tomarNotas();
+     AOS.init();
  },
  methods: {
+     select(nota){
+         this.notaSelected = nota;
+        this.$modal.show('image');
+     },
+     takeImage(e){
+         this.Image =  e.target.files[0];
+     },
      tomarNotas(){
             db.collection('Notas').onSnapshot(querySnapShot => {
             const FinalNota = [];
@@ -122,28 +153,41 @@ export default {
      Cerrar(){
          this.$modal.hide('hello-world');
      },
-     Crear(){
+     async Crear(){
+         if(this.Image){
+             const response = await storage.ref('Imagenes/'+ this.Image.name).put(this.Image);
+            this.form.imageUrl = await response.ref.getDownloadURL();
+         }else{
+
+         }
+         
          db.collection('Notas').add(this.form).then();
+         this.form.Titulo = '';
+         this.form.Cuerpo = '';
+         this.form.PieDePagina = '';
+         this.Image = '';
          this.Cerrar()
      },
      takeOne(notas){
         this.form.Titulo = notas.Titulo;
         this.form.Cuerpo = notas.Cuerpo;
         this.form.PieDePagina = notas.PieDePagina;
+        this.form.imageUrl = notas.imageUrl;
         this.NotaId = notas.notaId;
         this.$modal.show('actualizar');
      },
-     Actulizar(){
+     async Actulizar(){
+     if(this.Image){
+     const response = await storage.ref('Imagenes/'+ this.Image.name).put(this.Image);
+     this.form.imageUrl = await response.ref.getDownloadURL();
+     }
+
       db.collection('Notas').doc(this.NotaId).update(this.form).then(response =>{
-          this.tomarNotas();
           this.$modal.hide('actualizar');
       }).catch()
      },
      Eliminar(id){
-        db.collection('Notas').doc(id).delete().then(response =>{
-            let index = this.notaFinal.findIndex(r => r.notaId === id);
-            this.notaFinal.splice(index, 1);
-        }).catch()
+        db.collection('Notas').doc(id).delete().then().catch()
      }
  }
 }
@@ -151,11 +195,38 @@ export default {
 
 
 <style>
+hr{
+    background-color: white;
+}
+h1{
+    font-family: 'Courier New', Courier, monospace;
+}
+body{
+ background-color: black;
+}
+.contenedor{
+    background-color: white;
+    padding: 2px;
+    position: absolute;
+    margin-right: 15px;
+    border-radius: 5px;
+    width: 93.6vw;
+}
 .conteiner{
     margin-left: 50px;
-    margin-top: 50px;
+    margin-top: 20px;
+    margin-right: 15px;
 }
-
+.card-body:hover{
+    color: white;
+}
+.card:hover{
+    background-color: black;
+    color: white;
+    -webkit-box-shadow: 0 10px 6px -6px #777;
+    -moz-box-shadow: 0 10px 6px -6px #777;
+    box-shadow: 0 10px 6px -6px #777;
+}
 .footer{
     background-color: black;
     padding: 5px;

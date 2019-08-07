@@ -7,9 +7,6 @@
       <li class="nav-item">
         <a class="nav-link" href="/#/ListaUsuarios">Usuarios</a>
       </li>
-       <li class="nav-item active">
-        <el-button class="btn btn-success"  type="success">SingUp</el-button>
-      </li>
     </ul>
 
   </div>
