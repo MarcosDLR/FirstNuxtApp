@@ -29,12 +29,17 @@ export default {
   */
   css: [
   ],
+
+  // router: {
+  //   middleware: 'auth'
+  // },
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
     '@/plugins/modal',
-    '@/plugins/firebase'
+    '@/plugins/firebase',
+    '@/plugins/auth'
   ],
   /*
   ** Nuxt.js dev-modules

@@ -7,6 +7,9 @@
       <li class="nav-item">
         <a class="nav-link" href="/#/ListaUsuarios">Usuarios</a>
       </li>
+       <li class="nav-item">
+        <a class="nav-link" @click="logout" ><button class="btn btn-info">Logout</button></a>
+      </li>
     </ul>
 
   </div>
@@ -19,8 +22,23 @@
 
 
 <script>
+import {auth} from '~/plugins/firebase'
 export default {
-    name: 'NavBar'
+    name: 'NavBar',
+    data(){
+      return{
+
+      };
+    },
+    methods: {
+      logout(){
+      auth.signOut().then(function() {
+          window.location = "/";
+        }).catch(function(error) {
+          console.log(error);
+        });
+      }
+    }
 }
 </script>
 

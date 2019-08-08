@@ -5,6 +5,7 @@
 <hr />
 <button style="width: 400px" @click="abrir" class="btn btn-info">Crear nota</button>
 
+
 </center>
 <br />
 <div class="contenedor">
@@ -19,8 +20,8 @@
     <hr>
     <p class="card-text">{{notes.Cuerpo}}</p>
     <p>{{notes.PieDePagina}}</p>
-    <button  @click="takeOne(notes)" class="btn btn-success">A</button>
-    <button  @click="Eliminar(notes.notaId)" class="btn btn-danger">E</button>
+    <button  @click="takeOne(notes)" class="btn btn-success">Update</button>
+    <button  @click="Eliminar(notes.notaId)" class="btn btn-danger">Delete</button>
   </div>
 </div>
 </div>
@@ -28,48 +29,120 @@
 </div>
 </div>
 </div>
-<modal style="border-radius: 50px;" name="hello-world">
+
+<modal
+:width="750"
+:height="550"
+ style="border-radius: 50px;" name="hello-world">
+
     <center>
 <h3 style="padding: 20px">Crear nota</h3>
     </center>
 <hr>
-<div class="cont">
-<input @change="takeImage" type="file"  />
-<br />
-<label>Titulo</label>
-<input type="text" v-model="form.Titulo" class="form-control" />
-<label>Cuerpo</label>
-<input type="textarea" v-model="form.Cuerpo" class="form-control" />
-<label>Recordatorio</label>
-<input type="text" v-model="form.PieDePagina" class="form-control" />
+    <div class="cont" v-if="!enviando" id="contguardar">
+    <input class="btn btn-primary" @change="takeImage" type="file"  />
+    <img width="30%" height="80%" id="output"/>
+    <br />
+    <label data-aos="fade-right" data-aos-duration="3000">Titulo</label>
+    <input data-aos="fade-right" data-aos-duration="3000" type="text" v-model="form.Titulo" class="form-control" />
+    <label data-aos="fade-right" data-aos-duration="3000">Cuerpo</label>
+    <textarea data-aos="fade-right" data-aos-duration="3000" type="textarea" v-model="form.Cuerpo" class="form-control"> </textarea>
+    <label data-aos="fade-right" data-aos-duration="3000">Recordatorio</label>
+    <input data-aos="fade-right" data-aos-duration="3000" type="text" v-model="form.PieDePagina" class="form-control" />
+    </div>
+
+<div class="cargando" v-else  id="contguardarloading">
+    <div> 
+    <div class="spinner-grow text-primary" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+<div class="spinner-grow text-secondary" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+<div class="spinner-grow text-success" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+<div class="spinner-grow text-danger" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+<div class="spinner-grow text-warning" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+<div class="spinner-grow text-info" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+<div class="spinner-grow text-light" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+<div class="spinner-grow text-dark" role="status">
+  <span class="sr-only">Loading...</span>
 </div>
 
-<div class="footer">
+</div>
+    <h3>Guardando su nota...</h3>
+</div>
+
+
+<div class="footer" v-if="!enviando">
 <div class="row">
-<button style="margin-left: 410px;" @click="Crear" class="btn btn-primary">Guardar</button>
+<button style="margin-left: 300px;" @click="Crear" class="btn btn-primary">Guardar</button>
 <button style="margin-left: 10px;" @click="Cerrar" class="btn btn-primary">Cerrar</button>
 </div>
 </div>
 </modal>
 
-<modal style="border-radius: 50px;" name="actualizar">
+<modal
+:width="750"
+:height="550"
+ style="border-radius: 50px;" name="actualizar">
     <center>
 <h3 style="padding: 20px">Actualizar nota</h3>
     </center>
 <hr>
-<div class="cont">
-<input @change="takeImage" type="file"  />
+<div id="preimage" class="cont" v-if="!enviando" >
+<input class="btn btn-primary" @change="takeImage" id="imagen" type="file"  />
+<img data-aos="flip-left" data-aos-duration="2000" v-if="form.imageUrl" :src="form.imageUrl" width="30%" height="80%"  id="output"/>
 <br />
-<label>Titulo</label>
-<input type="text" v-model="form.Titulo" class="form-control" />
-<label>Cuerpo</label>
-<input type="textarea" v-model="form.Cuerpo" class="form-control" />
-<label>Recordatorio</label>
-<input type="text" v-model="form.PieDePagina" class="form-control" />
+<label data-aos="fade-right" data-aos-duration="3000">Titulo</label>
+<input data-aos="fade-right" data-aos-duration="3000" type="text" v-model="form.Titulo" class="form-control" />
+<label data-aos="fade-right" data-aos-duration="3000">Cuerpo</label>
+<textarea data-aos="fade-right" data-aos-duration="3000" type="textarea" v-model="form.Cuerpo" class="form-control"> </textarea>
+<label data-aos="fade-right" data-aos-duration="3000">Recordatorio</label>
+<input data-aos="fade-right" data-aos-duration="3000" type="text" v-model="form.PieDePagina" class="form-control" />
 </div>
 
+<div class="cargando" v-else  id="contguardarloading">
+    <div> 
+    <div class="spinner-grow text-primary" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+<div class="spinner-grow text-secondary" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+<div class="spinner-grow text-success" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+<div class="spinner-grow text-danger" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+<div class="spinner-grow text-warning" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+<div class="spinner-grow text-info" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+<div class="spinner-grow text-light" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+<div class="spinner-grow text-dark" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
 
-<div class="footer">
+</div>
+    <h3>Actualizando su nota...</h3>
+</div>
+
+<div class="footer" v-if="!enviando">
 <div class="row">
 <button style="margin-left: 410px;" @click="Actulizar" class="btn btn-primary">Actualizar</button>
 <button style="margin-left: 10px;" @click="Cerrar" class="btn btn-primary">Cerrar</button>
@@ -93,20 +166,24 @@ import 'aos/dist/aos.css'
 export default {
     name: 'Notas',
     title: 'Notas',
+
+   // middleware: 'auth',
  data(){
      return {
       data: [],
+      enviando: false,
       notaSelected: {},
       idnota: [],
       notaFinal: [],
       NotaId: 0,
+      imageSelected: '',
       Image: '',
       form: {
           Titulo: '',
           Cuerpo: '',
           PieDePagina: '',
           imageUrl: ''
-      },
+      }
      };
  },
  created(){
@@ -115,11 +192,23 @@ export default {
  },
  methods: {
      select(nota){
-         this.notaSelected = nota;
-        this.$modal.show('image');
+       this.notaSelected = nota;
+        if(this.notaSelected.imageUrl){
+          this.$modal.show('image');
+        }else{
+           this.$modal.hide('image');
+        }
+      
+       
      },
      takeImage(e){
          this.Image =  e.target.files[0];
+            var reader = new FileReader();
+            reader.onload = function(){
+              var output = document.getElementById('output');
+              output.src = reader.result;
+            };
+            reader.readAsDataURL(e.target.files[0]);
      },
      tomarNotas(){
             db.collection('Notas').onSnapshot(querySnapShot => {
@@ -154,19 +243,23 @@ export default {
          this.$modal.hide('hello-world');
      },
      async Crear(){
+
+         this.enviando = true;
+        //  window.document.getElementById('contguardar').style.display = 'none';
+        //  window.document.getElementById('contguardarloading').style.display = 'block';
          if(this.Image){
              const response = await storage.ref('Imagenes/'+ this.Image.name).put(this.Image);
             this.form.imageUrl = await response.ref.getDownloadURL();
-         }else{
-
          }
-         
+         this.Image = '';
          db.collection('Notas').add(this.form).then();
          this.form.Titulo = '';
          this.form.Cuerpo = '';
          this.form.PieDePagina = '';
-         this.Image = '';
-         this.Cerrar()
+         this.form.imageUrl = '';
+         this.Cerrar();
+
+         this.enviando = false;
      },
      takeOne(notas){
         this.form.Titulo = notas.Titulo;
@@ -177,13 +270,22 @@ export default {
         this.$modal.show('actualizar');
      },
      async Actulizar(){
+     this.enviando = true;
+     this.cargando = false;
      if(this.Image){
      const response = await storage.ref('Imagenes/'+ this.Image.name).put(this.Image);
      this.form.imageUrl = await response.ref.getDownloadURL();
      }
 
       db.collection('Notas').doc(this.NotaId).update(this.form).then(response =>{
-          this.$modal.hide('actualizar');
+          this.Image = '';
+         this.form.Titulo = '';
+         this.form.Cuerpo = '';
+         this.form.PieDePagina = '';
+         this.form.imageUrl = '';
+         this.cargando = true;
+         this.$modal.hide('actualizar');
+         this.enviando = false;
       }).catch()
      },
      Eliminar(id){
@@ -218,24 +320,25 @@ body{
     margin-right: 15px;
 }
 .card-body:hover{
-    color: white;
+    color: black;
 }
 .card:hover{
-    background-color: black;
-    color: white;
-    -webkit-box-shadow: 0 10px 6px -6px #777;
-    -moz-box-shadow: 0 10px 6px -6px #777;
-    box-shadow: 0 10px 6px -6px #777;
+    transition-duration: .8s;
+    background-color: white;
+    /* -webkit-box-shadow: 0 10px 6px -6px #777;
+    -moz-box-shadow: 0 10px 6px -6px #777; */
+    box-shadow: 3px 3px 5px rgba(0,0,0,0.5);
 }
 .footer{
     background-color: black;
     padding: 5px;
     height: 70px;
+    margin-top: 230px;
 }
 .cont{
     padding: 15px; 
     height:150px;
- overflow-y: scroll;
+    position:relative;
 }
 
 .cont::-webkit-scrollbar {
@@ -244,5 +347,19 @@ body{
  
 .cont::-webkit-scrollbar-thumb {
    background-color: green;
+   width: 50px;
+   height: 50px;;
 }
+.principal{
+    position: relative;
+}
+.cargando{
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    }
 </style>
