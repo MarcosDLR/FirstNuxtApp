@@ -3,26 +3,21 @@
 
 <div class="conteiner">
 
-    <div class="login">
+       <div class="singUp">
         <div class="cabecera">
-        <h3>Login</h3>
-        <hr />
+                <h3>SingUp</h3>
         <input v-model="Email" type="email" data-aos="fade-right" data-aos-duration="3000" style="width: 60%; border-radius: 7px;" placeholder="Correo" class="form-control form-control-sm" required/>
         <br>
         <input v-model="Password" type="Password" data-aos="fade-left" data-aos-duration="3000" style="width: 60%; border-radius: 7px;" placeholder="Contraseña" class="form-control form-control-sm" required/>
         <br />
         <label style="color: red">{{Respuesta}}</label>
-  
-        <button style="width: 170px; border-radius: 40px;" @click="login" class="btn btn-dark">Login</button>
-        <br />
-        <a href="/SingUp">No tiene una cuenta ?</a>
-  
-    </div>
-    </div>
-
+        <button style="width: 170px; border-radius: 40px;" @click="singUpUser" class="btn btn-info">SingUp</button>
+          <br />
+        <a href="/">Tiene una cuenta ?</a>
     </div>
  </div>
-
+</div>
+</div>
 </template>
 
 
@@ -38,23 +33,22 @@ export default {
             Email: '',
             Password: '',
             Respuesta: '',
+            singUp: false,
         };
     },
     created(){
         AOS.init();
     },
     methods: {
-        async login(){
-            try{
-               await auth.signInWithEmailAndPassword(this.Email, this.Password)
-                this.Email = '';
-                this.Password = '';
-                //this.$router.push("/Notas/Notas");
-                window.location = "/Notas/Notas";
-            }catch{
-                window.alert('ocurrio un problema');
-            }
-
+        async singUpUser(){
+        try{
+             await auth.createUserWithEmailAndPassword(this.Email, this.Password)
+             window.location = "/Welcome";
+        }catch{
+            window.alert('Ocurrio un error');
+        }
+       
+        
         }
 }
 }
@@ -91,16 +85,6 @@ justify-content: center;
 align-items: center;
 font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
-.login{
-    width: 400px;
-    height: 400px;
-    border-radius: 50%;
-    background-color: rgb(255, 255, 255, 0.6);
-    transition-duration: 3s;
-}
-hr{
-    background-color: black;
-}
 .singUp{
     color: white;
     width: 400px;
@@ -108,5 +92,11 @@ hr{
     border-radius: 50%;
     background-color: rgb(0, 0, 0, 0.6);
     transition-duration: 3s;
+}
+.arriba{
+    position: relative;
+    background-color: white;
+    border-radius: 50%;
+    top: 0%;
 }
 </style>

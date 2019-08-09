@@ -1,9 +1,9 @@
 <template>
 <div class="conteiner">
     <center>
-<h1 style="color: white">Notas</h1>
+<h1 style="color: black">Notas</h1>
 <hr />
-<button style="width: 400px" @click="abrir" class="btn btn-info">Crear nota</button>
+<button style="width: 400px; border-radius: 40px;" @click="abrir" class="btn btn-info">Crear nota</button>
 
 
 </center>
@@ -163,11 +163,12 @@ import {db} from '~/plugins/firebase'
 import {storage} from '~/plugins/firebase'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
+import {mapState} from 'Vuex'
 export default {
     name: 'Notas',
     title: 'Notas',
 
-   // middleware: 'auth',
+   middleware: 'auth',
  data(){
      return {
       data: [],
@@ -182,13 +183,20 @@ export default {
           Titulo: '',
           Cuerpo: '',
           PieDePagina: '',
-          imageUrl: ''
+          imageUrl: '',
+          userId: 0
       }
      };
  },
  created(){
      this.tomarNotas();
      AOS.init();
+     console.log(this.user.uid);
+ },
+ computed: {
+   ...mapState({
+     user: state => state.user.user
+   })
  },
  methods: {
      select(nota){
@@ -198,8 +206,6 @@ export default {
         }else{
            this.$modal.hide('image');
         }
-      
-       
      },
      takeImage(e){
          this.Image =  e.target.files[0];
@@ -211,7 +217,7 @@ export default {
             reader.readAsDataURL(e.target.files[0]);
      },
      tomarNotas(){
-            db.collection('Notas').onSnapshot(querySnapShot => {
+            db.collection('Notas').where('userId', '==', this.user.uid).onSnapshot(querySnapShot => {
             const FinalNota = [];
           querySnapShot.forEach(doc =>{
               console.log(doc);
@@ -247,11 +253,13 @@ export default {
          this.enviando = true;
         //  window.document.getElementById('contguardar').style.display = 'none';
         //  window.document.getElementById('contguardarloading').style.display = 'block';
+        
          if(this.Image){
              const response = await storage.ref('Imagenes/'+ this.Image.name).put(this.Image);
             this.form.imageUrl = await response.ref.getDownloadURL();
          }
          this.Image = '';
+         this.form.userId = this.user.uid;
          db.collection('Notas').add(this.form).then();
          this.form.Titulo = '';
          this.form.Cuerpo = '';
@@ -298,13 +306,13 @@ export default {
 
 <style>
 hr{
-    background-color: white;
+    background-color: black;
 }
 h1{
     font-family: 'Courier New', Courier, monospace;
 }
 body{
- background-color: black;
+ background-color: white;
 }
 .contenedor{
     background-color: white;
@@ -319,15 +327,19 @@ body{
     margin-top: 20px;
     margin-right: 15px;
 }
+.card{
+  opacity: 0.4
+}
 .card-body:hover{
     color: black;
 }
 .card:hover{
     transition-duration: .8s;
     background-color: white;
+    opacity: 1;
     /* -webkit-box-shadow: 0 10px 6px -6px #777;
     -moz-box-shadow: 0 10px 6px -6px #777; */
-    box-shadow: 3px 3px 5px rgba(0,0,0,0.5);
+    box-shadow: 8px 8px 10px rgba(0,0,0,0.5);
 }
 .footer{
     background-color: black;
